@@ -1,1 +1,4 @@
 PERSONAL.md
+__pycache__/
+IMPLEMENTATION.md
+.env

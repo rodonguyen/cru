@@ -1,0 +1,2 @@
+[tool.black]
+line-length = 120  # Increase from default to 120 characters
