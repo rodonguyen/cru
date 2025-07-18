@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-from .utils import get_schedule_data
+from .services import get_schedule_data
 from .loaders import DataLoaderError
 from .processors import ScheduleProcessorError
 
@@ -16,15 +16,11 @@ def schedule_table(request) -> Response:
     Return formatted schedule data for frontend table consumption.
     """
     try:
-        logger.info(
-            f"Processing schedule table request from {request.META.get('REMOTE_ADDR', 'unknown')}"
-        )
+        logger.info(f"Processing schedule table request from {request.META.get('REMOTE_ADDR', 'unknown')}")
 
         data = get_schedule_data()
 
-        logger.info(
-            f"Successfully returned schedule data with {len(data.get('rows', []))} rows"
-        )
+        logger.info(f"Successfully returned schedule data with {len(data.get('rows', []))} rows")
         return Response(data, status=status.HTTP_200_OK)
 
     except DataLoaderError as e:
