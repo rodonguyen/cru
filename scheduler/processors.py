@@ -92,7 +92,7 @@ class ScheduleDataProcessor:
                     schedule.append(worker_row)
 
             formatted_dates = [self._format_date(date) for date in dates]
-            columns = ["Name"] + formatted_dates
+            columns = ["Name"] + formatted_dates if len(schedule) > 0 else []
             return {"columns": columns, "rows": schedule}
 
         except Exception as e:

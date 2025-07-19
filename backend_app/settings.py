@@ -61,6 +61,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "backend_app.wsgi.application"
 
+# Database configuration - set up to satisfy Django's test framework requirements
+# We are using JSON files for the database
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
+
 # Internationalization
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
