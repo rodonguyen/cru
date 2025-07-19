@@ -2,4 +2,5 @@ Django==5.2.0
 djangorestframework==3.16.0 
 python-dotenv==1.0.0 
 django-cors-headers==4.3.1 
-psutil==5.9.8 
+psutil==5.9.8
+coverage==7.9.2 

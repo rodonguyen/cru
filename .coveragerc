@@ -1,0 +1,42 @@
+[run]
+source = .
+omit = 
+    */migrations/*
+    */venv/*
+    */env/*
+    */virtualenv/*
+    */.venv/*
+    */site-packages/*
+    manage.py
+    */settings/*
+    backend_app/wsgi.py
+    backend_app/asgi.py
+    */tests/*
+    */__pycache__/*
+    .git/*
+    */node_modules/*
+    */staticfiles/*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    if self.debug:
+    if settings.DEBUG
+    raise AssertionError
+    raise NotImplementedError
+    if 0:
+    if __name__ == .__main__.:
+    class .*\bProtocol\):
+    @(abc\.)?abstractmethod
+
+show_missing = True
+skip_covered = False
+precision = 2
+
+[html]
+directory = coverage_html_report
+title = BE Exercise Coverage Report
+
+[xml]
+output = coverage.xml 

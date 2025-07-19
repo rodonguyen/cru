@@ -211,12 +211,12 @@ class PerformanceTestCase(TestCase):
         self.assertLess(
             metrics.processing_time,
             PERFORMANCE_THRESHOLDS[1].max_processing_time_seconds,
-            "Baseline should process in under 1 second",
+            "Baseline should process under the threshold",
         )
         self.assertLess(
             metrics.memory_usage_mb,
             PERFORMANCE_THRESHOLDS[1].max_memory_usage_mb,
-            "Baseline should use less than 50MB",
+            "Baseline should use less than the threshold",
         )
 
     def test_performance_1000x_scale(self):
@@ -250,47 +250,47 @@ class PerformanceTestCase(TestCase):
         self.assertIn("rows", result)
         self.assertGreater(len(result["rows"]), 0, "Should produce output rows")
 
-    # def test_performance_10000x_scale(self):
-    #     """Test performance with 10000x dataset size."""
-    #     metrics = self._measure_performance(scale_factor=10000)
+    def test_performance_10000x_scale(self):
+        """Test performance with 10000x dataset size."""
+        metrics = self._measure_performance(scale_factor=10000)
 
-    #     print(f"\n10000x Scale Performance:")
-    #     print(f"  Processing time: {metrics.processing_time:.3f} seconds")
-    #     print(f"  Memory usage: {metrics.memory_usage_mb:.1f} MB")
-    #     print(f"  Data scale: {metrics.data_scale}")
+        print(f"\n10000x Scale Performance:")
+        print(f"  Processing time: {metrics.processing_time:.3f} seconds")
+        print(f"  Memory usage: {metrics.memory_usage_mb:.1f} MB")
+        print(f"  Data scale: {metrics.data_scale}")
 
-    #     # Should be acceptable for batch processing
-    #     self.assertLess(
-    #         metrics.processing_time,
-    #         PERFORMANCE_THRESHOLDS[10000].max_processing_time_seconds,
-    #         "10000x scale should process under the threshold",
-    #     )
-    #     self.assertLess(
-    #         metrics.memory_usage_mb,
-    #         PERFORMANCE_THRESHOLDS[10000].max_memory_usage_mb,
-    #         "10000x scale should use less than the threshold",
-    #     )
+        # Should be acceptable for batch processing
+        self.assertLess(
+            metrics.processing_time,
+            PERFORMANCE_THRESHOLDS[10000].max_processing_time_seconds,
+            "10000x scale should process under the threshold",
+        )
+        self.assertLess(
+            metrics.memory_usage_mb,
+            PERFORMANCE_THRESHOLDS[10000].max_memory_usage_mb,
+            "10000x scale should use less than the threshold",
+        )
 
-    # def test_performance_100000x_scale(self):
-    #     """Test performance with 100000x dataset size."""
-    #     metrics = self._measure_performance(scale_factor=100000)
+    def test_performance_100000x_scale(self):
+        """Test performance with 100000x dataset size."""
+        metrics = self._measure_performance(scale_factor=100000)
 
-    #     print(f"\n100000x Scale Performance:")
-    #     print(f"  Processing time: {metrics.processing_time:.3f} seconds")
-    #     print(f"  Memory usage: {metrics.memory_usage_mb:.1f} MB")
-    #     print(f"  Data scale: {metrics.data_scale}")
+        print(f"\n100000x Scale Performance:")
+        print(f"  Processing time: {metrics.processing_time:.3f} seconds")
+        print(f"  Memory usage: {metrics.memory_usage_mb:.1f} MB")
+        print(f"  Data scale: {metrics.data_scale}")
 
-    #     # Should be acceptable for batch processing
-    #     self.assertLess(
-    #         metrics.processing_time,
-    #         PERFORMANCE_THRESHOLDS[100000].max_processing_time_seconds,
-    #         "100000x scale should process under the threshold",
-    #     )
-    #     self.assertLess(
-    #         metrics.memory_usage_mb,
-    #         PERFORMANCE_THRESHOLDS[100000].max_memory_usage_mb,
-    #         "100000x scale should use less than the threshold",
-    #     )
+        # Should be acceptable for batch processing
+        self.assertLess(
+            metrics.processing_time,
+            PERFORMANCE_THRESHOLDS[100000].max_processing_time_seconds,
+            "100000x scale should process under the threshold",
+        )
+        self.assertLess(
+            metrics.memory_usage_mb,
+            PERFORMANCE_THRESHOLDS[100000].max_memory_usage_mb,
+            "100000x scale should use less than the threshold",
+        )
 
     def test_performance_scaling_cost_should_be_less_than_scaling_factor(self):
         """Test how performance scales across different data sizes."""
@@ -309,7 +309,9 @@ class PerformanceTestCase(TestCase):
 
             scale_ratio = curr_scale / prev_scale
             time_ratio = curr_metrics.processing_time / prev_metrics.processing_time
-            memory_ratio = curr_metrics.memory_usage_mb / prev_metrics.memory_usage_mb
+            memory_ratio = (
+                1 if prev_metrics.memory_usage_mb == 0 else curr_metrics.memory_usage_mb / prev_metrics.memory_usage_mb
+            )
 
             # Time scaling should be roughly linear (not exponential)
             self.assertLess(
