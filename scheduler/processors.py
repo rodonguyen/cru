@@ -1,10 +1,11 @@
 import logging
 from collections import defaultdict
 from datetime import datetime
-from typing import Dict
+from typing import Dict, List
 from django.utils.dateformat import format as date_format
 
 from .loaders import DataLoader
+from .constants import EMPTY_POSITION_ID, EMPTY_POSITION_NAME
 
 logger = logging.getLogger(__name__)
 
@@ -16,11 +17,9 @@ class ScheduleProcessorError(Exception):
 
 
 class ScheduleDataProcessor:
-    """
-    Processes raw data into schedule table format.
-    """
+    """Processes schedule data into table format optimized for frontend display."""
 
-    def __init__(self, data_loader: DataLoader) -> None:
+    def __init__(self, data_loader: DataLoader):
         """Initialize processor with data loader."""
         self.data_loader = data_loader
 
@@ -56,6 +55,7 @@ class ScheduleDataProcessor:
             worker_date = defaultdict(dict)  # 2D map to store work duration for each worker on each date
             position_worker = defaultdict(set)  # Position to workers existing in the assignments
             position_date = defaultdict(dict)  # 2D map to store work duration for each position on each date
+
             for assignment in assignments:
                 date = self.data_loader.get_task_by_id(assignment["task_id"])["date"]
                 worker_id = assignment["worker_id"]
@@ -64,6 +64,9 @@ class ScheduleDataProcessor:
                 task = self.data_loader.get_task_by_id(assignment["task_id"])
                 duration = task["duration"]
 
+                # Handle null position_id - use special constant
+                position_id = task["position_id"] if task["position_id"] is not None else EMPTY_POSITION_ID
+
                 # Add duration to worker_date
                 worker_date[worker_id][date] = worker_date[worker_id].get(date, 0) + duration
 
@@ -71,16 +74,24 @@ class ScheduleDataProcessor:
                 dates.add(date)
 
                 # Add worker to position_worker
-                position_worker[task["position_id"]].add(worker_id)
+                position_worker[position_id].add(worker_id)
 
                 # Add duration to position_date
-                position_date[task["position_id"]][date] = position_date[task["position_id"]].get(date, 0) + duration
+                position_date[position_id][date] = position_date[position_id].get(date, 0) + duration
 
             schedule = []
             dates = sorted(dates)
 
-            for position_id in position_worker.keys():
-                position_name = self.data_loader.get_position_by_id(position_id)["name"]
+            # Sort positions to show empty position last
+            sorted_positions = sorted(position_worker.keys(), key=lambda x: (x == EMPTY_POSITION_ID, x))
+
+            for position_id in sorted_positions:
+                # Handle position name for empty position
+                if position_id == EMPTY_POSITION_ID:
+                    position_name = EMPTY_POSITION_NAME
+                else:
+                    position_name = self.data_loader.get_position_by_id(position_id)["name"]
+
                 position_row = [position_name] + [position_date[position_id].get(date, 0) for date in dates]
                 schedule.append(position_row)
 

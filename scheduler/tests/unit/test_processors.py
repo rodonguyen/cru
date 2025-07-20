@@ -214,3 +214,53 @@ class ScheduleDataProcessorTestCase(TestCase):
         # Test invalid date
         with self.assertRaises(ScheduleProcessorError):
             self.processor._format_date("invalid-date")
+
+    def test_null_position_id_handling(self):
+        """Test that null position_id values are handled correctly."""
+        # Add task with null position_id
+        null_position_task = {"id": 999, "position_id": None, "duration": 5, "date": "2025-01-15"}
+
+        # Add worker with null position_id
+        null_position_worker = {"id": 999, "name": "Unassigned Worker", "position_id": None}
+
+        # Add assignment for null position task
+        null_assignment = {"task_id": 999, "worker_id": 999}
+
+        # Update test data
+        self.tasks_data.append(null_position_task)
+        self.workers_data.append(null_position_worker)
+        self.assignments_data.append(null_assignment)
+        self._write_test_files()
+
+        # Process schedule data
+        loader = DataLoader(base_dir=Path(self.test_dir))
+        processor = ScheduleDataProcessor(loader)
+        result = processor.process_schedule_data()
+
+        # Verify empty position is included
+        position_names = [
+            row[0] for row in result["rows"] if row[0] in ["Supervisor", "Welder", "Fitter", "Empty Position"]
+        ]
+        self.assertIn("Empty Position", position_names)
+
+        # Verify empty position is last (sorted)
+        last_position_idx = max(
+            [
+                i
+                for i, row in enumerate(result["rows"])
+                if row[0] in ["Supervisor", "Welder", "Fitter", "Empty Position"]
+            ]
+        )
+        self.assertEqual(result["rows"][last_position_idx][0], "Empty Position")
+
+        # Verify worker appears under empty position
+        empty_position_idx = next(i for i, row in enumerate(result["rows"]) if row[0] == "Empty Position")
+        worker_under_empty = result["rows"][empty_position_idx + 1]
+        self.assertEqual(worker_under_empty[0], "Unassigned Worker")
+
+        # Verify duration is calculated correctly for empty position
+        jan_15_col_idx = result["columns"].index("15 Jan 25")
+        empty_position_duration = result["rows"][empty_position_idx][jan_15_col_idx]
+        worker_duration = worker_under_empty[jan_15_col_idx]
+        self.assertEqual(empty_position_duration, 5)
+        self.assertEqual(worker_duration, 5)

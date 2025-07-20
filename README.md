@@ -30,7 +30,7 @@ python manage.py test scheduler.tests.performance
 ```
 
 ## Key highlights of this app
-- High coverage and testing strategy for the critical logic. In processing schedule table, I avoided nested loops and used hashmaps smartly to achieve O(n) when iterating through the list of assignments and positions + workers to construct the rows. This is proved in my performance test.
+- In processing schedule table, I avoided nested loops and used hashmaps smartly to achieve O(n) when iterating through the list of assignments and positions + workers to construct the rows. This is proved in my performance test.
 - Performance test is particularly valued as /schedule-table is the most used endpoint in scheduling app so I made sure the runtime and memory cost do not blow up when the input data is larger. **The algorithm achieves sub-linear runtime scaling** (1.87x growth for 100x data increase) with near-linear memory usage.
 
   Performance Scaling Analysis:
@@ -48,6 +48,8 @@ python manage.py test scheduler.tests.performance
 
   ![Coverage Report](assets/readme_coverage_report.png)
 
+- The endpoint can handle `null` position value in task and position and put that into calculation under "Empty Position" row. However, if position is allowed to be empty, I think this can also be an official position in the database. The endpoint handling adding/editing worker, position, task should use Position = (id = 10 or any number, name: "Empty position") and /schedule-table endpoint can be much simpler.   
+  I assume task with `null` position can accept worker with any position and this person will be listed under "Empty position" row in schedule table.
 - Data is cached with `DataLoader` class to reduce the number of data loading times or Database queries in real scenarios. This can be migrated to Redis or Database native caching if possible to reduce the load on server and application-level.
 - Applying **singleton** pattern to reuse DataLoader and ScheduleDataProcessor in services.py, reducing DB connection and computational usage.
 - Professional automated CI on Pull Requests: tests must all pass, check dependencies, code quality and format.
