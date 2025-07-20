@@ -22,8 +22,8 @@ Returns schedule data in optimised table format.
 ### Run Tests
 ```bash
 # Unit tests with coverage
-coverage run --source=. manage.py test scheduler.tests.unit
-coverage report
+coverage run --source=. manage.py test
+coverage html
 
 # Performance tests (100.000x scale)
 python manage.py test scheduler.tests.performance
