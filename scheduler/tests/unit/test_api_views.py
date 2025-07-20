@@ -67,7 +67,7 @@ class ScheduleAPITestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
         self.assertIn("error", response.data)
         self.assertEqual(response.data["code"], "INTERNAL_ERROR")
-        self.assertIn("An unexpected error occurred", response.data["error"])
+        self.assertIn("Internal server error", response.data["error"])
 
     def test_schedule_table_response_structure(self):
         """Test that response has expected structure and data types."""

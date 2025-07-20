@@ -47,4 +47,4 @@ python manage.py test scheduler.tests.performance
 - Of course, tests to validate output correctness are also implemented.
 - Data is cached with `DataLoader` class to reduce the number of data loading times or Database queries in real scenarios. This can be migrated to Redis or Database native caching if possible to reduce the load on server and application-level.
 - Applying **singleton** pattern to reuse DataLoader and ScheduleDataProcessor in services.py, reducing DB connection and computational usage.
-- Professional automated CI test on Pull Requests.
+- Professional automated CI on Pull Requests: tests must all pass, check dependencies, code quality and format.

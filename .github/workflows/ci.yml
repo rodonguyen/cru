@@ -60,6 +60,7 @@ jobs:
         with:
           file: ./coverage.xml
           fail_ci_if_error: false 
+          
   quality-checks:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'main'
@@ -78,7 +79,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install flake8 black bandit safety
+          pip install flake8 black bandit pip-audit
 
       - name: Run Linting
         run: |
@@ -88,10 +89,10 @@ jobs:
       - name: Run Security Checks
         run: |
           bandit -r . -x tests/ || true
-          safety check || true
+          pip-audit || true
 
       - name: Generate Security Report
         run: |
           echo "✅ Security checks completed"
           echo "- Bandit: Static security analysis"
-          echo "- Safety: Dependency vulnerability check" 
+          echo "- pip-audit: Dependency vulnerability check" 
