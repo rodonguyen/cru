@@ -16,7 +16,7 @@ def schedule_table(request) -> Response:
     Return formatted schedule data for frontend table consumption.
     """
     try:
-        logger.info(f"Processing schedule table request from {request.META.get('REMOTE_ADDR', 'unknown')}")
+        logger.info("Processing schedule table request")
 
         data = get_schedule_data()
 

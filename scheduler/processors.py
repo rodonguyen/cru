@@ -72,7 +72,6 @@ class ScheduleDataProcessor:
 
                 # Add worker to position_worker
                 position_worker[task["position_id"]].add(worker_id)
-                assert self.data_loader.get_worker_by_id(worker_id)["position_id"] == task["position_id"]
 
                 # Add duration to position_date
                 position_date[task["position_id"]][date] = position_date[task["position_id"]].get(date, 0) + duration
