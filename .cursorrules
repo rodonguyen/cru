@@ -1,0 +1,10 @@
+Key Django 5.2 Best Practices:
+  Minimal settings: Only include necessary INSTALLED_APPS and MIDDLEWARE
+  Proper app structure: Use apps.py for app configuration
+  Type hints: Use Python typing throughout
+  Dataclasses: For clean data structures without ORM
+  Function-based views: With proper decorators for REST API
+  URL patterns: Proper namespacing and organization
+  Security: CSRF, security headers, proper SECRET_KEY handling
+  Performance: Caching, efficient data processing
+  Error handling: Proper HTTP status codes and error responses
