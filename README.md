@@ -31,14 +31,14 @@ python manage.py test scheduler.tests.performance
 
 ## Key highlights of this app
 - In processing schedule table, I avoided nested loops and used hashmaps smartly to achieve O(n) when iterating through the list of assignments and positions + workers to construct the rows. This is proved in my performance test.
-- Performance test is particularly valued as /schedule-table is the most used endpoint in scheduling app so I made sure the runtime and memory cost do not blow up when the input data is larger. **The algorithm achieves sub-linear runtime scaling** (1.87x growth for 100x data increase) with near-linear memory usage.
+- Performance test is particularly valued as /schedule-table is the most used endpoint in scheduling app so I made sure the runtime and memory cost do not blow up when the input data is larger. **The algorithm achieves less than 3x runtime** with 100x data increase.
 
   Performance Scaling Analysis:
 
   | Data Scale | Runtime (s) | Memory (MB) | Data Scale Factor | Runtime Ratio | Memory Ratio | Runtime Efficiency* | Memory Efficiency* |
   |------------|-------------|-------------|-------------------|---------------|--------------|--------------------|--------------------|
   | 1x         | 0.0281      | 0.0039      | -                 | -             | -            | -                  | -                  |
-  | 10x        | 0.0342      | 0.0703      | 10x               | 1.22x         | 18.03x       | **0.12** (excellent) | 1.80 (acceptable) |
+  | 10x        | 0.0342      | 0.0703      | 10x               | 1.22x         | 18.03x (stablised in higher scaling factor so it is ok)       | **0.12** (excellent) | 1.80 (acceptable) |
   | 20x        | 0.0365      | 0.1094      | 2x                | 1.07x         | 1.56x        | **0.53** (excellent) | **0.78** (excellent) |
   | 50x        | 0.0432      | 0.3945      | 2.5x              | 1.18x         | 3.61x        | **0.47** (excellent) | 1.44 (acceptable) |
   | 100x       | 0.0524      | 0.6055      | 2x                | 1.21x         | 1.54x        | **0.61** (excellent) | **0.77** (excellent) |
