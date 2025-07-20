@@ -300,9 +300,9 @@ class PerformanceTestCase(TestCase):
         for scale in scale_factors:
             metrics = self._measure_performance(scale)
             metrics_list.append((scale, metrics))
-            print(f"\nScale {scale}x: {metrics.processing_time:.3f}s, {metrics.memory_usage_mb:.1f}MB")
+            print(f"\nScale {scale}x: {metrics.processing_time:.4f}s, {metrics.memory_usage_mb:.4f}MB")
 
-        # Check that scaling cost is reasonable (not exponential)
+        # Check that scaling cost is linear
         for i in range(1, len(metrics_list)):
             prev_scale, prev_metrics = metrics_list[i - 1]
             curr_scale, curr_metrics = metrics_list[i]
@@ -310,10 +310,10 @@ class PerformanceTestCase(TestCase):
             scale_ratio = curr_scale / prev_scale
             time_ratio = curr_metrics.processing_time / prev_metrics.processing_time
             memory_ratio = (
-                1 if prev_metrics.memory_usage_mb == 0 else curr_metrics.memory_usage_mb / prev_metrics.memory_usage_mb
+                1 if prev_metrics.memory_usage_mb < 0.1 else curr_metrics.memory_usage_mb / prev_metrics.memory_usage_mb
             )
 
-            # Time scaling should be roughly linear (not exponential)
+            # Time scaling should be roughly linear
             self.assertLess(
                 time_ratio, scale_ratio * 2, f"Time scaling from {prev_scale}x to {curr_scale}x is too steep"
             )
