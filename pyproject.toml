@@ -1,2 +1,23 @@
 [tool.black]
 line-length = 120  # Increase from default to 120 characters
+
+[tool.coverage.run]
+source = "."
+omit = [
+    "*/migrations/*",
+    "*/venv/*",
+    "*/env/*",
+    "manage.py",
+    "*/settings.py",
+    "*/wsgi.py",
+    "*/tests/*",
+    "*/__pycache__/*"
+]
+
+[tool.coverage.html]
+directory = "coverage_html_report"
+
+[tool.coverage.report]
+skip_covered = false
+show_missing = true
+precision = 2

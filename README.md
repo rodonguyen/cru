@@ -22,8 +22,8 @@ Returns schedule data in optimised table format.
 ### Run Tests
 ```bash
 # Unit tests with coverage
-coverage run --source=. manage.py test scheduler.tests.unit
-coverage report
+coverage run --source=. manage.py test
+coverage html
 
 # Performance tests (100.000x scale)
 python manage.py test scheduler.tests.performance
@@ -44,7 +44,11 @@ python manage.py test scheduler.tests.performance
   | 100x       | 0.0524      | 0.6055      | 2x                | 1.21x         | 1.54x        | **0.61** (excellent) | **0.77** (excellent) |
 
 - Tests with extremely large data show the endpoint finishes in linear scaling factor with the data but it is not ideal in production as it is longer than 1 second (33s for 100.000x input, 2.5s for 10.000x input). Future improvements could limit the date range, positions or workers so that it does not overwhelm the backend with one request.
-- Of course, tests to validate output correctness are also implemented.
+- Of course, tests to validate output correctness are also implemented and achieve high coverage.
+
+  ![Coverage Report](assets/readme_coverage_report.png)
+
 - Data is cached with `DataLoader` class to reduce the number of data loading times or Database queries in real scenarios. This can be migrated to Redis or Database native caching if possible to reduce the load on server and application-level.
 - Applying **singleton** pattern to reuse DataLoader and ScheduleDataProcessor in services.py, reducing DB connection and computational usage.
 - Professional automated CI on Pull Requests: tests must all pass, check dependencies, code quality and format.
+- Developed with AI-assisted coding (Cursor AI) to accelerate implementation of my technical design and approach.
